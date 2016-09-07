@@ -4,6 +4,8 @@ library(data.table)
 library(ggplot2)
 library(caret)
 library(h2o)
+library(lattice)
+
 options(scipen=999)
 ---#carga----
 
@@ -45,7 +47,7 @@ ggplot(producto_premium_201604, aes(cliente_sucursal, fill = clase)) + geom_bar(
 
 #cliente_edad vs clase
 ggplot(producto_premium_201604, aes(cliente_edad, fill = clase)) + geom_bar()
-
+stem(producto_premium_201604$cliente_edad)
 #cprestamos_hipotecarios vs clase
 
 producto_premium_201604[,prop.table(table(producto_premium_201604$cprestamos_hipotecarios,producto_premium_201604$clase))]
@@ -55,7 +57,21 @@ ggplot(producto_premium_201604, aes(cprestamos_hipotecarios, fill = clase)) + ge
 #check classes of all variables
 sapply(producto_premium_201604, class)
 
+----#creacion variables----
+
+substr(as.character(unique(test$foto_mes)),5,6)
+
+producto_premium_201604[,Mes:= substr(as.character(unique(foto_mes)),5,6)]
+unique(cut(producto_premium_201604$cliente_edad,breaks=10))
+producto_premium_201604[,Edad_bins:=cut(cliente_edad,breaks=10)]
+unique(producto_premium_201604$Edad_bins)
+ggplot(producto_premium_201604, aes(Edad_bins, fill = clase)) + geom_bar()
+
+
+
 ----#test y train----
+producto_premium_201604$clase <- factor(producto_premium_201604$clase)
+producto_premium_201604$participa <- factor(producto_premium_201604$participa)
 
 set.seed(123)
 intrain <- createDataPartition(y=producto_premium_201604$clase,p=0.80,list = FALSE)
