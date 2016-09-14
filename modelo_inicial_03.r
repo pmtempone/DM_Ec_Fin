@@ -9,7 +9,7 @@ abril_dataset <- read.table("d:\\uba\\a2016\\producto_premium_201604.txt", heade
 
 # generacion del modelo
 t0 =  Sys.time()
-abril_modelo  <- rpart( clase ~ .   ,   data = abril )
+abril_modelo  <- rpart( clase ~ .   ,   data = abril_dataset )
 t1 = Sys.time()
 as.numeric(  t1 - t0 )
 
@@ -22,5 +22,5 @@ junio_dataset <- read.table("d:\\uba\\a2016\\producto_premium_201606.txt", heade
 
 junio_prediccion  <- predict(  abril_modelo, junio_dataset, type = "prob")
 
-write.table( sort( junio_prediccion, 2 ), file="d:\\uba\\a2016\\junio_prediccion.txt", row.names=TRUE)
+write.table(  junio_prediccion, file="d:\\uba\\a2016\\junio_prediccion.txt", row.names=TRUE)
 

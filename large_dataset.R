@@ -20,57 +20,54 @@ dim(producto_premium_201604)
 str(producto_premium_201604)
 
 #analyzing variable
-prop.table(table(abril$clase))
+producto_premium_201604[,prop.table(table(clase))]
 
 '     BAJA+1      BAJA+2    CONTINUA 
 0.003721261 0.003175682 0.993103058 '
 
-prop.table(table(abril$participa))
+producto_premium_201604[,prop.table(table(participa))]
 
 #unique values in ID variables
-length(unique(abril$cliente_sucursal))
+length(unique(producto_premium_201604$cliente_sucursal))
 
 #missing values
-colSums(is.na(abril))
+colSums(is.na(producto_premium_201604))
 
 
 ----#exploracion grafica----
 
 #marketing vs clase
-ggplot(abril, aes(marketing_activo_ultimos90dias, fill = clase)) + geom_bar()
+ggplot(producto_premium_201604, aes(marketing_activo_ultimos90dias, fill = clase)) + geom_bar()
 
 #cliente_vip vs clase
-ggplot(abril, aes(cliente_vip, fill = clase)) + geom_bar()
+ggplot(producto_premium_201604, aes(cliente_vip, fill = clase)) + geom_bar()
 
 #cliente_sucursal vs clase
-ggplot(abril, aes(cliente_sucursal, fill = clase)) + geom_bar()
+ggplot(producto_premium_201604, aes(cliente_sucursal, fill = clase)) + geom_bar()
 
 #cliente_edad vs clase
-ggplot(abril, aes(cliente_edad, fill = clase)) + geom_bar()
-stem(abril$cliente_edad) #partimos en 10 clases
+ggplot(producto_premium_201604, aes(cliente_edad, fill = clase)) + geom_bar()
+stem(producto_premium_201604$cliente_edad)
 #cprestamos_hipotecarios vs clase
 
-prop.table(table(abril$cprestamos_hipotecarios,abril$clase))
+producto_premium_201604[,prop.table(table(producto_premium_201604$cprestamos_hipotecarios,producto_premium_201604$clase))]
 
-ggplot(abril, aes(cprestamos_hipotecarios, fill = clase)) + geom_bar()
+ggplot(producto_premium_201604, aes(cprestamos_hipotecarios, fill = clase)) + geom_bar()
 
 #check classes of all variables
-sapply(abril, class)
+sapply(producto_premium_201604, class)
 
 ----#creacion variables----
 
 substr(as.character(unique(test$foto_mes)),5,6)
 
-#solo con dt producto_premium_201604[,Mes:= substr(as.character(unique(foto_mes)),5,6)]
-unique(cut(abril$cliente_edad,breaks=10))
-abril[,Edad_bins:=cut(cliente_edad,breaks=10)]
+producto_premium_201604[,Mes:= substr(as.character(unique(foto_mes)),5,6)]
+unique(cut(producto_premium_201604$cliente_edad,breaks=10))
+producto_premium_201604[,Edad_bins:=cut(cliente_edad,breaks=10)]
 unique(producto_premium_201604$Edad_bins)
 ggplot(producto_premium_201604, aes(Edad_bins, fill = clase)) + geom_bar()
 
-abril$Edad_bins <- cut(abril$cliente_edad,breaks=10)
 
-unique(abril$Edad_bins)
-ggplot(abril, aes(Edad_bins, fill = clase)) + geom_bar()
 
 ----#test y train----
 producto_premium_201604$clase <- factor(producto_premium_201604$clase)
