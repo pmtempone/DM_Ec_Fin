@@ -13,7 +13,7 @@ abril_dataset_testing  <- abril[-abril_inTraining,]
 
 ----#funcion de ganancia---
   
-  ganancia = function( probs, clases ){
+ganancia = function( probs, clases ){
     suma = 0 ;
     largo = length( clases ) ;
     
@@ -24,7 +24,7 @@ abril_dataset_testing  <- abril[-abril_inTraining,]
     }
     
     return( suma )
-
+}
 
 ---#preparacion archivo-----
 
@@ -41,9 +41,18 @@ vmaxdepth <- c(3:20)
 ---#loop rpart exp 1----
 
 
+for (s in 1:6){
+  #genero training y test
+  set.seed( semilla[s] )
+  abril_inTraining <- createDataPartition( abril$clase, p = .70, list = FALSE)
+  abril_dataset_training <- abril[ abril_inTraining,]
+  abril_dataset_testing  <- abril[-abril_inTraining,]
+}
+
+
+
 for(  vmaxdepth  in  3:20 )
 {
-  semilla <- c( 102191, 200177, 410551, 552581, 892237 )
   ganancias <- c() 
   tiempos <- c()
   
