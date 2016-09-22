@@ -12,6 +12,7 @@ abril_dataset_training <- abril_dataset[ abril_inTraining,]
 abril_dataset_testing  <- abril_dataset[-abril_inTraining,]
 
 ----#funcion de ganancia---
+
   
 ganancia = function( probs, clases ){
     suma = 0 ;
@@ -28,7 +29,7 @@ ganancia = function( probs, clases ){
 
 ---#preparacion archivo-----
 
-cat( "fecha", "archivo", "algoritmo", "cp" , "minsplit", "minbucket", "maxdepth", "ganancias" , "\n", sep="\t", file="salida_exp_1.txt", fill=FALSE, append=FALSE )
+cat( "fecha", "archivo", "algoritmo", "cp" , "minsplit", "minbucket", "maxdepth", "ganancias" , "\n", sep="\t", file="salida_exp_1_v2.txt", fill=FALSE, append=FALSE )
 
 
 ----#variables base----
@@ -38,19 +39,29 @@ vminsplit <- c(20,50,100,200,300,400,500,600,700,800,900,1000,1500,2000,2500,300
 vminbucket <- c(2,3,4,5) ; #cambiar por un valor en el for
 vmaxdepth <- c(3:20)
 
+#Nuevos parametros segun analisis de corridas
+semillas <- c(101987,226283,342191,417379)#,557309,649277)
+
+vcp <- c(0,0.0001,0.001,0.005) ;
+vminsplit <- c(20,50,100,200,300,400) ;
+vminbucket <- c(2,3,4,5) ; #cambiar por un valor en el for
+vmaxdepth <- c(4:20)
+
 #test
 abril_modelo  <- rpart( clase ~ . ,data = abril_dataset_training,xval=0, cp=vcp[4], minsplit=vminsplit[1], minbucket= 10, maxdepth=vmaxdepth[1])  
 
-
+abril.exp.1 <- abril[,1:170]
+abril.exp.1$clase <- ifelse(abril.exp.1$clase=='BAJA+2','BAJA+2','CONTINUA')
+abril.exp.1$clase2 <- NULL 
 ---#loop rpart exp 1----
 exp_1_result <- data.frame()
 
 for (s in 1:4){
   #genero training y test
   set.seed( semilla[s] )
-  abril_inTraining <- createDataPartition( abril$clase, p = .70, list = FALSE)
-  abril_dataset_training <- abril[ abril_inTraining,1:170]
-  abril_dataset_testing  <- abril[-abril_inTraining,1:170]
+  abril_inTraining <- createDataPartition( abril.exp.1$clase, p = .70, list = FALSE)
+  abril_dataset_training <- abril.exp.1[ abril_inTraining,]
+  abril_dataset_testing  <- abril.exp.1[-abril_inTraining,]
   for (vcp_c in 1:length(vcp)){
     for (vminsplit_c in 1:length(vminsplit)) {
       for (vminbucket_c in 1:length(vminbucket)) {
@@ -69,9 +80,9 @@ for (s in 1:4){
           # calculo la ganancia normalizada  en testing
           ganancias = ganancia( abril_testing_prediccion,  abril_dataset_testing$clase ) / 0.30
           
-          exp_1_result <<- rbind(exp_1_result,data.frame(date=format(Sys.time(), "%Y%m%d %H%M%S"),duracion= tiempos,seed=semillas[s],algoritm='rpart',cp=vcp[vcp_c], minsplit=vminsplit[vminsplit_c], minbucket=vminbucket[vminbucket_c], maxdepth=vmaxdepth[vmaxdepth_c],ganancias))
+          exp_1_result <- rbind(exp_1_result,data.frame(date=format(Sys.time(), "%Y%m%d %H%M%S"),duracion= tiempos,seed=semillas[s],algoritm='rpart',cp=vcp[vcp_c], minsplit=vminsplit[vminsplit_c], minbucket=vminbucket[vminbucket_c], maxdepth=vmaxdepth[vmaxdepth_c],ganancias))
           
-          cat( format(Sys.time(), "%Y%m%d %H%M%S"),'abril', "rpart", vcp[vcp_c] , vminsplit[vminsplit_c], vminbucket[vminbucket_c], vmaxdepth[vmaxdepth_c], ganancias, "\n", sep="\t", file="salida_exp_1.txt", fill=FALSE, append=TRUE )
+          cat( format(Sys.time(), "%Y%m%d %H%M%S"),'abril', "rpart", vcp[vcp_c] , vminsplit[vminsplit_c], vminbucket[vminbucket_c], vmaxdepth[vmaxdepth_c], ganancias, "\n", sep="\t", file="salida_exp_1_v2.txt", fill=FALSE, append=TRUE )
           
         }
       }
