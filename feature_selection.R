@@ -32,3 +32,20 @@ filtro <- my_data_status$variable[my_data_status$p_zeros<100 & my_data_status$ty
   print(importance)
   # plot importance
   plot(importance)
+  
+  -----#Automatically select features using Caret R Package----
+  
+  # ensure the results are repeatable
+  set.seed(7)
+  # define the control using a random forest selection function
+  control <- rfeControl(functions=rfFuncs, method="cv", number=10)
+  rfe()
+  # run the RFE algorithm
+  results <- rfe(as.data.frame(abril_dataset_training)[,2:124], as.data.frame(abril_dataset_training)[,169], sizes=c(1:50),na.action=na.omit, rfeControl=control)
+  # summarize the results
+  print(results)
+  # list the chosen features
+  predictors(results)
+  # plot the results
+  plot(results, type=c("g", "o"))
+  
