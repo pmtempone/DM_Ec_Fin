@@ -14,6 +14,7 @@ unique(abril$master_cuenta_estado)
 abril$problemafin <- ifelse((abril$visa_cuenta_estado==10 & abril$master_cuenta_estado==10) | (abril$visa_cuenta_estado==10 & is.na(abril$master_cuenta_estado)) | (abril$master_cuenta_estado==10 & is.na(abril$visa_cuenta_estado))
                             ,"NO",ifelse(is.na(abril$visa_cuenta_estado) & is.na(abril$master_cuenta_estado),NA,"SI"))
 
+#control estados
 estados <- abril %>% select(visa_cuenta_estado,master_cuenta_estado,problemafin) %>%group_by(visa_cuenta_estado,master_cuenta_estado,problemafin) %>% summarize_each(funs(n_distinct))
 
-estados$visa_cuenta_estado[is.na(estados$visa_cuenta_estado)]
+
