@@ -34,7 +34,7 @@ abril_dataset_testing  <- abril[-abril_inTraining,]
 
 # generacion del modelo sobre los datos de training
 t0 =  Sys.time()
-abril_modelo  <- rpart( clase ~ .   ,   data = abril_dataset_training,   cp = 0.001 )
+abril_modelo  <- rpart( clase ~ .   ,   data = abril_dataset_training,   cp = 0.001,xval=0,minsplit=20 )
 t1 = Sys.time()
 as.numeric(  t1 - t0 )
 
