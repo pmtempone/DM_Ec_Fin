@@ -53,7 +53,7 @@ Prediccion <-as.data.frame(
 
 #grabar salida en las base
 pw <- {
-"Belsaga305"
+"..."
 }
 
 # loads the PostgreSQL driver
