@@ -10,6 +10,7 @@ options(scipen = 9999)
 ---#cliente a indice----
 rownames(abril) <- abril$numero_de_cliente
 abril$numero_de_cliente <- NULL
+abril <- abril[,c(1:175)]
 
 ----#funcion de ganancia---
   
