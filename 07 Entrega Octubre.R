@@ -7,7 +7,7 @@ library(foreach)
 
   Prediccion <-as.data.frame(
     foreach(i=1:Iteraciones,.combine=cbind) %do% 
-    {predict(modelo[[i]], entrega_octubre)}
+    {predict(modelo_check_1[[i]], entrega_octubre)}
   )  
 
 #salvar prediccion en archivo
@@ -18,4 +18,6 @@ library(foreach)
   remove(Prediccion)
   
   pred_bagging$clase <- factor(ifelse(pred_bagging[,"BAJA+2"]>(250/8000),"BAJA+2","CONTINUA"))
+  
+  write.csv(pred_bagging[pred_bagging$clase=="BAJA+2",],file = "entrega_checkpoint1.csv")
   
