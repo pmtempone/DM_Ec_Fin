@@ -1,7 +1,6 @@
 #Arbol con libreria  rpart
 
 library(rpart)
-library(rattle)
 
 
 abril_dataset <- read.table("d:\\uba\\a2016\\producto_premium_201604.txt", header=TRUE, sep="\t", row.names="numero_de_cliente")
