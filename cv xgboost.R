@@ -73,7 +73,7 @@ fganancia_multi.sp <- function(preds, dtrain)
   
   for( i in 1:largo )
   {
-    if( preds[ 2*i ]  > 0.03125  ){ suma <- suma + if( labels[i]==1 ) { 7750 } else { -250 }  
+    if( preds[ 2*i ]  > 0.021  ){ suma <- suma + if( labels[i]==1 ) { 7750 } else { -250 }  
     } ;
   }
   
@@ -81,6 +81,21 @@ fganancia_multi.sp <- function(preds, dtrain)
 }
 
 
+fganancia_multi.sp <- function(preds, dtrain) 
+{
+  labels <- getinfo(dtrain, "label")
+  
+  suma = 0 ;
+  largo = length( labels ) ;
+  
+  for( i in 1:largo )
+  {
+    if( preds[ 2*i ]  > 0.021  ){ suma <- suma + if( labels[i]==1 ) { 7750 } else { -250 }  
+    } ;
+  }
+  
+  return(list(metric = "ganancia", value = suma))
+}
 
 
 
@@ -156,8 +171,10 @@ t3 = Sys.time()
 
 
 #SIN PESO
+abril_dataset_sinclase <-   abril_seis[ , !(names(abril_seis) %in% c("clase") ) ] 
 
 dtrain_sinpeso = xgb.DMatrix(data = data.matrix(abril_dataset_sinclase),label =etiqueta,missing = NA )
+etiqueta <- ifelse(abril$clase=="BAJA+2",1,0)
 
 
 
@@ -197,9 +214,9 @@ cv.multi.sp = xgb.cv(
   stratified = TRUE,       nfold = 5 ,
   eta = 0.01, 
   subsample = 1.0, 
-  colsample_bytree = 0.7, 
-  min_child_weight = vmin_child_weight, 
-  max_depth = 11,
+  colsample_bytree = 0.6, 
+  min_child_weight = 5, 
+  max_depth = 4,
   alpha = 0, lambda = 0.1, gamma = 0.01,
   nround= vnround, 
   objective="multi:softprob",         num_class=2,
@@ -229,6 +246,8 @@ max( cv.multi.sp[310:1000 , test.ganancia.mean] ) / (1/5)
 which.max(  cv.multi.sp[ 310:1000, test.ganancia.mean] )
 
 x <- c( 350:1000 )
+write.table(cv.multi.sp[  350:1000,test.ganancia.mean ],"multi_sp_1.txt",row.names = FALSE,quote=FALSE)
+write.table(cv.multi.sp.2[  350:1000,test.ganancia.mean ],"multi_sp_2.txt",row.names = FALSE,quote=FALSE)
 
 plot(   x, cv.multi.sp[  350:1000,test.ganancia.mean ] / (1/5),  col="orange",  type="l" )
 lines(  x,  cv.logistic.cp[  350:1000,test.ganancia.mean ] / (1/5) , col="blue" )
@@ -238,3 +257,22 @@ lines(  x, cv.logistic.sp[  350:1000,test.ganancia.mean ] / (1/5),  col="red" )
 
 
 "mejor con 11, nround 449"
+
+set.seed( 102191  )
+
+t6 =  Sys.time()
+cv.multi.sp.2 = xgb.cv( 
+  data = dtrain_sinpeso ,          missing = 0 ,
+  stratified = TRUE,       nfold = 5 ,
+  eta = 0.01, 
+  subsample = 1.0, 
+  colsample_bytree = 0.4, 
+  min_child_weight = vmin_child_weight, 
+  max_depth = 4,
+  alpha = 0, lambda = 0.1, gamma = 0.01,
+  nround= vnround, 
+  objective="multi:softprob",         num_class=2,
+  feval = fganancia_multi.sp,            maximize =TRUE
+)
+
+t7 = Sys.time()
